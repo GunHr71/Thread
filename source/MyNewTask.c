@@ -1,5 +1,5 @@
 #include "MyNewTask.h"
-
+#include "router_eligible_device_app.h"
 osaEventId_t mMyEvents;
 /* Global Variable to store our TimerID */
 tmrTimerID_t myTimerID = gTmrInvalidTimerID_c;
@@ -113,9 +113,9 @@ void MyTaskTimer_Start(void)
 /* This is the function called by the Timer each time it expires */
 void myTaskTimerCallback(void *param)
 {
-	uint16_t led_count = 0;
+	//uint16_t led_count = 0;
 	OSA_EventSet(mMyEvents, gMyNewTaskEvent2_c);
-
+	Ip_view();
 }
 
 

@@ -83,7 +83,7 @@ Private macros
 #define APP_SINK_URI_PATH                       "/sink"
 
 #define APP_RESOURCE1_URI_PATH					"/resource1"
-#define APP_RESOURCE2_URI_PATH					"/resource2"
+#define APP_RESOURCE2_URI_PATH					"/team2"
 #if LARGE_NETWORK
 #define APP_RESET_TO_FACTORY_URI_PATH           "/reset"
 #endif
@@ -186,6 +186,12 @@ Public functions
 \fn     void APP_Init(void)
 \brief  This function is used to initialize application.
 ***************************************************************************************************/
+void Ip_view(void)
+{
+	uint8_t lol = 0;
+	lol++;		//gCoapDestAddress
+}
+
 static void APP_CoapResource1Cb(coapSessionStatus_t sessionStatus, void *pData, coapSession_t *pSession, uint32_t dataLen)
 
 {
@@ -196,7 +202,7 @@ static void APP_CoapResource1Cb(coapSessionStatus_t sessionStatus, void *pData, 
   COAP_AddOptionToList(pMySession,COAP_URI_PATH_OPTION, APP_RESOURCE2_URI_PATH,SizeOfString(APP_RESOURCE2_URI_PATH));
 
     if (gCoapConfirmable_c == pSession->msgType)
-  {
+    {
     if (gCoapGET_c == pSession->code)
     {
       shell_write("'CON' packet received 'GET' with payload: ");

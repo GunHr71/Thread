@@ -26,7 +26,8 @@ source/MyNewTask.o source/MyNewTask.d: ../source/MyNewTask.c \
  D:\Proyects\Thread\frdmkw41z_wireless_examples_thread_router_eligible_device_freertos\drivers/fsl_common.h \
  D:\Proyects\Thread\frdmkw41z_wireless_examples_thread_router_eligible_device_freertos\framework\OSAbstraction\Interface/fsl_os_abstraction.h \
  D:\Proyects\Thread\frdmkw41z_wireless_examples_thread_router_eligible_device_freertos\framework\OSAbstraction\Interface/fsl_os_abstraction_config.h \
- D:\Proyects\Thread\frdmkw41z_wireless_examples_thread_router_eligible_device_freertos\CMSIS/MKW41Z4.h
+ D:\Proyects\Thread\frdmkw41z_wireless_examples_thread_router_eligible_device_freertos\CMSIS/MKW41Z4.h \
+ ../source/router_eligible_device_app.h
 D:/Proyects/Thread/frdmkw41z_wireless_examples_thread_router_eligible_device_freertos/source/config.h:
 D:\Proyects\Thread\frdmkw41z_wireless_examples_thread_router_eligible_device_freertos\nwk_ip\app\config/app_config.h:
 D:\Proyects\Thread\frdmkw41z_wireless_examples_thread_router_eligible_device_freertos\nwk_ip\app\config/app_stack_config.h:
@@ -55,3 +56,4 @@ D:\Proyects\Thread\frdmkw41z_wireless_examples_thread_router_eligible_device_fre
 D:\Proyects\Thread\frdmkw41z_wireless_examples_thread_router_eligible_device_freertos\framework\OSAbstraction\Interface/fsl_os_abstraction.h:
 D:\Proyects\Thread\frdmkw41z_wireless_examples_thread_router_eligible_device_freertos\framework\OSAbstraction\Interface/fsl_os_abstraction_config.h:
 D:\Proyects\Thread\frdmkw41z_wireless_examples_thread_router_eligible_device_freertos\CMSIS/MKW41Z4.h:
+../source/router_eligible_device_app.h:
