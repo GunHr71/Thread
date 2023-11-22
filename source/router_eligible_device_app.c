@@ -17,7 +17,7 @@ Include Files
 /* General Includes */
 #include "EmbeddedTypes.h"
 #include <string.h>
-
+#include "MyNewTask.h"
 /* FSL Framework */
 #include "shell.h"
 #include "Keyboard.h"
@@ -87,7 +87,7 @@ Private macros
 #endif
 
 #define APP_RESOURCE1_URI_PATH 	    	"/resource1"
-#define APP_RESOURCE2_URI_PATH		    "/resource2"
+#define APP_RESOURCE2_URI_PATH		    "/team2"
 
 #define APP_DEFAULT_DEST_ADDR                   in6addr_realmlocal_allthreadnodes
 
@@ -261,6 +261,7 @@ uint32_t dataLen
 {
   static uint8_t pMySessionPayload[3]={0x31,0x32,0x33};
   static uint32_t pMyPayloadSize=3;
+  char remoteAddress[INET6_ADDRSTRLEN];
   coapSession_t *pMySession = NULL;
   pMySession = COAP_OpenSession(mAppCoapInstId);
   COAP_AddOptionToList(pMySession,COAP_URI_PATH_OPTION, APP_RESOURCE2_URI_PATH,SizeOfString(APP_RESOURCE2_URI_PATH));
@@ -273,7 +274,7 @@ uint32_t dataLen
     }
     if (gCoapPOST_c == pSession->code)
     {
-      shell_write("'CON' packet received 'POST' with payload: ");
+      shell_write("'CON' instruction received from: ");
     }
     if (gCoapPUT_c == pSession->code)
     {
@@ -283,33 +284,43 @@ uint32_t dataLen
     {
       COAP_Send(pSession, gCoapMsgTypeAckSuccessChanged_c, pMySessionPayload, pMyPayloadSize);
     }
+    shell_write("'CON' instruction received from: ");
+    ntop(AF_INET6,(ipAddr_t*)&pSession->remoteAddrStorage.ss_addr, remoteAddress, INET6_ADDRSTRLEN);
+     //shell_printf("%d \n",counterto200);
+     shell_printf("%s\n\r",remoteAddress);
   }
 
-  else if(gCoapNonConfirmable_c == pSession->msgType)
+  else
   {
     if (gCoapGET_c == pSession->code)
     {
       shell_write("'NON' packet received 'GET' with payload: ");
     }
     if (gCoapPOST_c == pSession->code)
+
     {
       shell_write("'NON' packet received 'POST' with payload: ");
     }
     if (gCoapPUT_c == pSession->code)
     {
-      shell_write("'NON' packet received 'PUT' with payload: ");
+      shell_write("'NON'  packet received 'PUT' with payload: ");
     }
+    shell_write("'NON' instruction received from: ");
+    ntop(AF_INET6,(ipAddr_t*)&pSession->remoteAddrStorage.ss_addr, remoteAddress, INET6_ADDRSTRLEN);
+     //shell_printf("%d \n",counterto200);
+     shell_printf("%s\n\r",remoteAddress);
   }
-  shell_writeN(pData, dataLen);
-  shell_write("\r\n");
-  pMySession -> msgType=gCoapNonConfirmable_c;
-  pMySession -> code= gCoapPOST_c;
-  pMySession -> pCallback =NULL;
-  FLib_MemCpy(&pMySession->remoteAddrStorage,&gCoapDestAddress,sizeof(ipAddr_t));
-  COAP_Send(pMySession, gCoapMsgTypeNonPost_c,  pMySessionPayload, pMyPayloadSize);
-  shell_write("'NON' packet sent 'POST' with payload: ");
-  shell_writeN((char*) pMySessionPayload, pMyPayloadSize);
-  shell_write("\r\n");
+//  shell_writeN(pData, dataLen);
+//  shell_write("\r\n");
+//  pMySession -> msgType=gCoapNonConfirmable_c;
+//  pMySession -> code= gCoapPOST_c;
+//  pMySession -> pCallback =NULL;
+//  FLib_MemCpy(&pMySession->remoteAddrStorage,&gCoapDestAddress,sizeof(ipAddr_t));
+//  COAP_Send(pMySession, gCoapMsgTypeNonPost_c,  counterto200, sizeof(counterto200));
+////  shell_write("'NON' packet sent 'POST' with payload: ");
+//  ntop(AF_INET6,(ipAddr_t*)&pSession->remoteAddrStorage.ss_addr, remoteAddress, INET6_ADDRSTRLEN);
+//  //shell_printf("%d \n",counterto200);
+//  shell_printf("%s\n\r",remoteAddress);
 }
 
 ////////////

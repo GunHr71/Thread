@@ -12,7 +12,7 @@ static uint8_t ledsState = 0;
 /* OSA Task Definition*/
 OSA_TASK_DEFINE(My_Task, gMyTaskPriority_c, 1, gMyTaskStackSize_c, FALSE );
 
-uint8_t counterto200 = 0;
+extern uint8_t counterto200 = 0;
 //void Counter_change(uint8_t N)
 //{
 //	led_count = N--;
@@ -36,7 +36,7 @@ void My_Task(osaTaskParam_t argument)
 		switch(customEvent){
 			case gMyNewTaskEvent1_c:
 				TMR_StartIntervalTimer(myTimerID, /*myTimerID*/
-				2000, /* Timer's Timeout */
+				1000, /* Timer's Timeout */
 				myTaskTimerCallback, /* pointer to myTaskTimerCallback function */
 				NULL);
 				TurnOffLeds(); /* Ensure all LEDs are turned off */

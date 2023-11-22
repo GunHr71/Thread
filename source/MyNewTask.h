@@ -11,7 +11,7 @@
 #include "fsl_os_abstraction.h"
 #include "MKW41Z4.h"
 
-
+extern uint8_t counterto200;
 /* Define the available Task's Events */
 #define gMyNewTaskEvent1_c (1 << 0)
 #define gMyNewTaskEvent2_c (1 << 1)

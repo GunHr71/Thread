@@ -52,7 +52,7 @@ Public macros
 #define THR_ALL_FFs32                       0xFFFFFFFF
 
 /*! Max unsigned 16bit integers value */
-#define THR_ALL_FFs16                       0xFFFF
+#define THR_ALL_FFs16                       0x0202
 
 /*! Max unsigned 8bit integers value */
 #define THR_ALL_FFs8                        0xFF
