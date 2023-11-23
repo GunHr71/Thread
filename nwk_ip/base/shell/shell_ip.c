@@ -4041,8 +4041,13 @@ static void SHELL_CoapAckReceive
             if (index == dataLen)
             {
                 shell_write(" ");
-                shell_writeN((char*)pData, dataLen);
-                uint8_t val = *pData;
+                int val = (int)pData;
+                /*shell_printf("%d",(int)pData);
+                SHELL_PrintBuff(pData, dataLen);*/
+                shell_write(" ");
+                shell_printf("%d",val);
+                //shell_writeN(val, dataLen);
+
             }
             /* else, print as hex */
             else

@@ -14,6 +14,7 @@
 /*==================================================================================================
 Include Files
 ==================================================================================================*/
+
 /* General Includes */
 #include "EmbeddedTypes.h"
 #include <string.h>
@@ -98,6 +99,7 @@ Private type definitions
 /*==================================================================================================
 Private global variables declarations
 ==================================================================================================*/
+static tmrTimerID_t sec5TimerID = gTmrInvalidTimerID_c;
 static instanceId_t mThrInstanceId = gInvalidInstanceId_c;    /*!< Thread Instance ID */
 
 static bool_t mFirstPushButtonPressed = FALSE;
@@ -127,10 +129,9 @@ static void APP_CoapLedCb(coapSessionStatus_t sessionStatus, uint8_t *pData, coa
 static void APP_CoapTempCb(coapSessionStatus_t sessionStatus, uint8_t *pData, coapSession_t *pSession, uint32_t dataLen);
 static void APP_CoapSinkCb(coapSessionStatus_t sessionStatus, uint8_t *pData, coapSession_t *pSession, uint32_t dataLen);
 static void App_RestoreLeaderLed(uint8_t *param);
-
 static void APP_CoapResource1Cb(coapSessionStatus_t sessionStatus, void *pData, coapSession_t *pSession, uint32_t dataLen);
 static void APP_CoapResource2Cb(coapSessionStatus_t sessionStatus, void *pData, coapSession_t *pSession, uint32_t dataLen);
-static void APP_CoapResource3Cb(coapSessionStatus_t sessionStatus, void *pData, coapSession_t *pSession, uint32_t dataLen);
+static void Counter_request(coapSessionStatus_t sessionStatus, void *pData, coapSession_t *pSession, uint32_t dataLen);
 #if LARGE_NETWORK
 static void APP_CoapResetToFactoryDefaultsCb(coapSessionStatus_t sessionStatus, uint8_t *pData, coapSession_t *pSession, uint32_t dataLen);
 static void APP_SendResetToFactoryCommand(uint8_t *param);
@@ -189,11 +190,6 @@ Public functions
 \fn     void APP_Init(void)
 \brief  This function is used to initialize application.
 ***************************************************************************************************/
-void Ip_view(void)
-{
-	uint8_t lol = 0;
-	lol++;		//gCoapDestAddress
-}
 
 static void APP_CoapResource1Cb(coapSessionStatus_t sessionStatus, void *pData, coapSession_t *pSession, uint32_t dataLen)
 {
@@ -203,7 +199,7 @@ static void APP_CoapResource1Cb(coapSessionStatus_t sessionStatus, void *pData, 
   pMySession = COAP_OpenSession(mAppCoapInstId);
   COAP_AddOptionToList(pMySession,COAP_URI_PATH_OPTION, APP_RESOURCE2_URI_PATH,SizeOfString(APP_RESOURCE2_URI_PATH));
 
-   if (gCoapConfirmable_c == pSession->msgType)
+   /*if (gCoapConfirmable_c == pSession->msgType)
    {
     if (gCoapGET_c == pSession->code)
     {
@@ -238,8 +234,8 @@ static void APP_CoapResource1Cb(coapSessionStatus_t sessionStatus, void *pData, 
     {
       shell_write("'NON' packet received 'PUT' with payload: ");
     }
-  }
-  shell_writeN(pData, dataLen);
+  }*/
+  /*shell_writeN(pData, dataLen);
   shell_write("\r\n");
   shell_write("Counter: ");
   char remoteAddress[46];
@@ -251,9 +247,10 @@ static void APP_CoapResource1Cb(coapSessionStatus_t sessionStatus, void *pData, 
 
   pMySession -> msgType=gCoapNonConfirmable_c;
   pMySession -> code= gCoapPOST_c;
-  pMySession -> pCallback = NULL;
+  pMySession -> pCallback = NULL;*/
   FLib_MemCpy(&pMySession->remoteAddr,&gCoapDestAddress,sizeof(ipAddr_t));
-  COAP_Send(pMySession, gCoapMsgTypeNonGet_c, NULL, pMyPayloadSize); //pMyPayloadSize
+  COAP_Send(pMySession, gCoapMsgTypeNonGet_c, pMySessionPayload, pMyPayloadSize); //pMyPayloadSize
+
   //COAP_Send(pMySession, pMySessionPayload, pMyPayloadSize);
   /*COAP_Send(pSession, gCoapMsgTypeNonPost_c, NULL, 0);
   COAP_Send(pSession, gCoapMsgTypeNonPost_c, pCommand, dataLen);
@@ -271,7 +268,6 @@ static void APP_CoapResource2Cb(coapSessionStatus_t sessionStatus, void *pData, 
       shell_writeN(pData, dataLen);
       shell_write("\r\n");
   }
-
 }
 
 static void APP_CoapResource3Cb(coapSessionStatus_t sessionStatus,void *pData,coapSession_t *pSession,uint32_t dataLen)
@@ -336,8 +332,23 @@ void APP_Init(void)
         }
 #endif
     }
+    sec5TimerID = TMR_AllocateTimer();
 }
 
+static void Counter_request(coapSessionStatus_t sessionStatus,void *pData,coapSession_t *pSession,uint32_t dataLen)
+{
+	static uint8_t pMySessionPayload[1]={0x31};
+	static uint32_t pMyPayloadSize=1;
+	coapSession_t *pMySession = NULL;
+	pMySession = COAP_OpenSession(mAppCoapInstId);
+	COAP_AddOptionToList(pMySession,COAP_URI_PATH_OPTION, APP_RESOURCE1_URI_PATH,SizeOfString(APP_RESOURCE1_URI_PATH));
+	FLib_MemCpy(&pMySession->remoteAddrStorage,&gCoapDestAddress,sizeof(ipAddr_t));
+	COAP_Send(pMySession, gCoapConfirmable_c, pMySessionPayload, pMyPayloadSize);
+	char *buffer = pData;
+	uint16_t data = (uint16_t)*buffer;
+    shell_write(" ");
+    shell_printf("%d",data);
+}
 /*!*************************************************************************************************
 \fn     void App_Handler(void)
 \brief  Application Handler. In this configuration is called on the task with the lowest priority
@@ -527,6 +538,7 @@ void APP_Commissioning_Handler
             App_UpdateStateLeds(gDeviceState_FactoryDefault_c);
             break;
         case gThrEv_MeshCop_JoinerAccepted_c:
+        	TMR_StartIntervalTimer(sec5TimerID, 5000, Counter_request, NULL);
             break;
 
         /* Commissioner Events(event set applies for all Commissioners: on-mesh, external, native) */
@@ -591,6 +603,7 @@ static void APP_InitCoapDemo(void)
                                      {APP_CoapTempCb, (coapUriPath_t *)&gAPP_TEMP_URI_PATH},
 									 {APP_CoapResource1Cb, (coapUriPath_t*)&gAPP_RESOURCE1_URI_PATH},
 									 {APP_CoapResource2Cb, (coapUriPath_t*)&gAPP_RESOURCE2_URI_PATH},
+									 {Counter_request, (coapUriPath_t*)&gAPP_RESOURCE3_URI_PATH},
 #if LARGE_NETWORK
                                      {APP_CoapResetToFactoryDefaultsCb, (coapUriPath_t *)&gAPP_RESET_URI_PATH},
 #endif
