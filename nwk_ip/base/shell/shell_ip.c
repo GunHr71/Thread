@@ -968,6 +968,7 @@ void SHELL_EvMonitor
                 }
                 break;
             case gThrEv_NwkJoinCnf_Success_c:
+            	attrPanId = 0x0202;
                 shell_printf("\rAttached to network with PAN ID: 0x%x \n\r", attrPanId);
                 /* Check if the node is polling ED or ED */
                 if(attrCapabilities & 0x04)
@@ -1010,7 +1011,8 @@ void SHELL_EvMonitor
                 shell_refresh();
                 break;
             case gThrEv_NwkCreateCnf_Success_c:
-                shell_printf("\rCreated a new Thread network on channel %d and PAN ID:0x%x\n\r", attrChannel, attrPanId);
+            	attrPanId = 0x0202;
+                shell_printf("\rCreated a new Thread network on channel %d and PAN ID:0x0202\n\r", attrChannel);
                 printMeshLocal = TRUE;
                 break;
             case gThrEv_GeneralInd_RequestRouterId_c:
