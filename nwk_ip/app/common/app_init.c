@@ -276,6 +276,7 @@ void main_task(uint32_t param)
         NvIdle();
 #endif
         /* Debug Checks, Leader LED restore check */
+
         DBG_Check();
 #if gHybridApp_d
         /* Ble app */

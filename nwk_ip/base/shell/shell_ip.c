@@ -967,7 +967,7 @@ void SHELL_EvMonitor
                 }
                 break;
             case gThrEv_NwkJoinCnf_Success_c:
-                shell_printf("\rAttached to network with PAN ID: 0x%x \n\r", attrPanId);
+                shell_printf("\rAttached to network with PAN ID: 0x0202");//0x%x \n\r",attrPanId);
                 MyTask_Init();
                 MyTaskTimer_Start();
                 /* Check if the node is polling ED or ED */
@@ -4042,6 +4042,7 @@ static void SHELL_CoapAckReceive
             {
                 shell_write(" ");
                 shell_writeN((char*)pData, dataLen);
+                uint8_t val = *pData;
             }
             /* else, print as hex */
             else
